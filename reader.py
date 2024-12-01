@@ -20,7 +20,7 @@ import asyncio
 
 
 async def tail_input_file() -> dict:
-    PATH = "/home/mia_bobia/Downloads/Fightcade-linux-latest/Fightcade/emulator/fbneo/scripts/testlua.json"
+    PATH = "/home/nbee/Downloads/Fightcade/emulator/fbneo/scripts/state_dump_bools.json"
     # try:
     #     result = subprocess.Popen(
     #         f"tail -n 1 {PATH}",

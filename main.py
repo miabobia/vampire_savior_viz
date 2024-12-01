@@ -5,46 +5,76 @@ import json
 import pygame
 from typing import List
 
+# Constants
+SCREEN_WIDTH = 2000
+SCREEN_HEIGHT = 800
+FPS = 60  # Frames per second
+BAR_WIDTH = SCREEN_WIDTH // 2
+NUM_BOOLS = 29 # or 34 for p1
+NUM_INTS = 5   #10 for p1
+TOTAL_VALS = NUM_BOOLS + NUM_INTS
 max_number = 0
 min_number = 1000000
 avg_numbers = set()
 avg_number_len = 0
 
+# def tail_input_file():
+#     try:
+#         result = subprocess.Popen(
+#             # This eventually should be a environment variable
+#             # "/home/mia_bobia/Downloads/Fightcade-linux-latest/Fightcade/emulator/fbneo/scripts/state_dump_bools.json"
+#             "tail -n 1 /home/nbee/Downloads/Fightcade/emulator/fbneo/scripts/state_dump.json",
+#             shell=True, stdout=subprocess.PIPE
+#         ).stdout.read().decode('UTF-8')
+
+#         split = result.split('\r\n')
+#         loaded = json.loads(split[0])
+#         # print(loaded)
+#         return { "p1_bools": loaded['bools']['p1'],
+#                  "p2_bools": loaded['bools']['p2'],
+#                  "p1_numbers": loaded['numbers']['p1'],
+#                  "p2_numbers": loaded['numbers']['p2'],
+#                  "p1_strings": loaded['strings']['p1'],
+#                  "p2_strings": loaded['strings']['p2']
+#                 }
+#     except Exception as inst:
+#         print("err", inst)
 def tail_input_file():
     try:
         result = subprocess.Popen(
+            # This eventually should be a environment variable
             # "/home/mia_bobia/Downloads/Fightcade-linux-latest/Fightcade/emulator/fbneo/scripts/state_dump_bools.json"
-            "tail -n 1 /home/mia_bobia/Downloads/Fightcade-linux-latest/Fightcade/emulator/fbneo/scripts/state_dump.json",
+            "tail -n 1 /home/nbee/Downloads/Fightcade/emulator/fbneo/scripts/test_ram_dumper_state_dump.json",
             shell=True, stdout=subprocess.PIPE
         ).stdout.read().decode('UTF-8')
 
         split = result.split('\r\n')
         loaded = json.loads(split[0])
-        # print(loaded)
-        return { "p1_bools": loaded['bools']['p1'],
-                 "p2_bools": loaded['bools']['p2'],
-                 "p1_numbers": loaded['numbers']['p1'],
-                 "p2_numbers": loaded['numbers']['p2'],
-                 "p1_strings": loaded['strings']['p1'],
-                 "p2_strings": loaded['strings']['p2']
-                }
-    except:
-        print("err")
-
+        print(loaded)
+        return loaded
+        # return { "p1_bools": loaded['bools']['p1'],
+        #          "p2_bools": loaded['bools']['p2'],
+        #          "p1_numbers": loaded['numbers']['p1'],
+        #          "p2_numbers": loaded['numbers']['p2'],
+        #          "p1_strings": loaded['strings']['p1'],
+        #          "p2_strings": loaded['strings']['p2']
+        #         }
+    except Exception as inst:
+        print("err", inst)
 def bools_to_rects(vals: dict, origin: tuple) -> List[pygame.rect.Rect]:
-
     if vals is None:
         return ''
 
+    print("Num bools", len(vals))
     rects = []
-    rect_w, rect_h = 10, 50
+    rect_w, rect_h = BAR_WIDTH, SCREEN_HEIGHT//len(vals)
     x, y = origin
     index = 0
 
     for _, val in vals.items():
         r = pygame.rect.Rect(
-            x + index*rect_w,
-            y,
+            x,
+            y + (index*rect_h),
             rect_w,
             rect_h
         )
@@ -59,7 +89,7 @@ def bools_to_rects(vals: dict, origin: tuple) -> List[pygame.rect.Rect]:
 def num_to_rects(vals: dict, origin: tuple) -> List[pygame.rect.Rect]:
     if vals is None:
         return ''
-
+    print("Int values", len(vals))
     rects = []
     rect_w, rect_h = 10, 1
 
@@ -112,10 +142,6 @@ def json_number_stats(vals: dict):
 # Initialize Pygame
 pygame.init()
 
-# Constants
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
-FPS = 60  # Frames per second
 
 # Setup the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -154,10 +180,12 @@ def main():
             data_was_read = False
 
         if data and data_was_read:
-            rects = bools_to_rects(data["p1_bools"], (0, 295))
-            rects.extend(bools_to_rects(data["p2_bools"], (0, 200)))
-            rects.extend(num_to_rects(data['p1_numbers'], (0, 0)))
-            rects.extend(num_to_rects(data['p2_numbers'], (60, 0))) 
+            pass 
+            # rects = bools_to_rects(data["p1_bools"], (0, 0))
+            # rects.extend(bools_to_rects(data["p2_bools"], (SCREEN_WIDTH - BAR_WIDTH,0)))
+            # # This would display the values as heights of a bar
+            # rects.extend(num_to_rects(data['p1_numbers'], (0, 0)))
+            # rects.extend(num_to_rects(data['p2_numbers'], (60, 0))) 
 
         # Drawing
         screen.fill(WHITE)  # Clear the screen with a white background
@@ -176,6 +204,6 @@ def main():
     sys.exit()
 
 if __name__ == "__main__":
-    print(tail_input_file()["p1_strings"])
-    print(tail_input_file()["p2_strings"])
+    # print(tail_input_file()["p1_strings"])
+    # print(tail_input_file()["p2_strings"])
     main()
